@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="lab5" default="all" >
+
+        <property name="src" value="src"/>
+        <property name="bin" value="bin"/>
+        <property name="doc" value="doc"/>
+        <property name="dist" value="dist"/>
+        <property name="test" value="test"/>
+        <property name="test.src" value="${test}/src"/>
+        <property name="test.bin" value="${test}/bin"/>
+        <property name="dist.jar" value="${dist}/lab5.jar"/>
+        <property name="junit" value="test/lib/junit-4.10.jar"/>
+
+	<target name="mkdirs" description="Создаем каталоги">
+            <mkdir dir="${bin}"/>
+            <mkdir dir="${doc}"/>
+            <mkdir dir="${dist}"/>
+        </target>
+
+         <target name="compile" description="Компиляция проекта"  depends="clean,mkdirs">
+             <echo>Компилируем...</echo>
+            <javac destdir="${bin}" includeantruntime="false">
+            	<src path="${src}"/>
+            </javac>
+            <javac destdir="${test.bin}" includeantruntime="false">
+            	<src path="${test.src}"/>
+                <classpath>
+                    <pathelement location="${junit}"/>
+                    <pathelement location="${bin}"/>
+                </classpath>
+            </javac>
+         </target>
+
+	 <target name="test" depends="compile">
+    	    <junit haltonerror="yes" printsummary="yes" haltonfailure="yes">
+    	        <classpath>
+                    <pathelement location="${junit}"/>
+        	    <pathelement location="${test.bin}"/>
+        	    <pathelement location="${bin}"/>
+    	        </classpath>
+                <formatter type="plain" usefile="false" />
+                <batchtest fork="yes">
+            	    <fileset dir="${test.bin}" />
+                </batchtest> 
+            </junit>
+         </target>
+
+         <target name="all" description="Очистить и построить проект"  depends="test">
+            <echo>Сборка проекта...</echo>
+            <javadoc sourcepath="src" destdir="doc" />
+            <jar destfile="${dist.jar}" basedir="${bin}">
+		<manifest>
+      			<attribute name="Main-Class"
+            		value="ru.altailand.lab5.Lab5"/>
+    		</manifest>
+            </jar>
+         </target>
+
+         <target name="clean" description="Очистка">
+             <echo>Удаление каталогов</echo>
+             <delete dir="${bin}"/>
+             <delete dir="${doc}"/>
+             <delete dir="${dist}"/>
+         </target>
+
+</project>
